@@ -1,6 +1,6 @@
 build:
 	protoc -I. --go_out=plugins=micro:$(GOPATH)/src/github.com/amogower/shippy/vessel-service \
-    proto/vessel/vessel.proto
+		proto/vessel/vessel.proto
 	docker build -t vessel-service .
 
 run:
