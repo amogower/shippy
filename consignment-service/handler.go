@@ -1,11 +1,11 @@
 package main
 
 import (
+	"context"
 	"log"
 
 	proto "github.com/amogower/shippy/consignment-service/proto/consignment"
 	vesselProto "github.com/amogower/shippy/vessel-service/proto/vessel"
-	"golang.org/x/net/context"
 	mgo "gopkg.in/mgo.v2"
 )
 
