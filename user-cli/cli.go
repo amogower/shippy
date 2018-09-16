@@ -1,7 +1,13 @@
 package main
 
 import (
+	"context"
+	"log"
+	"os"
+
 	proto "github.com/amogower/shippy/user-service/proto/user"
+	"github.com/micro/cli"
+	"github.com/micro/go-micro"
 	microclient "github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/cmd"
 )
@@ -21,17 +27,17 @@ func main() {
 	)
 
 	service.Init(
-		micro.Action(func (c *cli.Context)) {
+		micro.Action(func(c *cli.Context) {
 			name := c.String("name")
 			email := c.String("email")
 			password := c.String("password")
 			company := c.String("comapny")
 
-			r, err := client.Create(context.TODO(), &proto.User {
-				Name: name,
-				Email: email,
+			r, err := client.Create(context.TODO(), &proto.User{
+				Name:     name,
+				Email:    email,
 				Password: password,
-				Company: company,
+				Company:  company,
 			})
 
 			if err != nil {
@@ -49,6 +55,6 @@ func main() {
 			}
 
 			os.Exit(0)
-		}
+		}),
 	)
 }
