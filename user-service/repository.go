@@ -1,12 +1,16 @@
 package main
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+
+	proto "github.com/amogower/shippy/user-service/proto/user"
+)
 
 type Repository interface {
 	GetAll() ([]*proto.User, error)
 	Get(id string) (*proto.User, error)
 	Create(user *proto.User) error
-	GetByEmailAndPassword(user *proto.User) (*proto.User, error)
+	GetByEmail(email string) (*proto.User, error)
 }
 
 type UserRepository struct {
@@ -30,8 +34,9 @@ func (repo *UserRepository) Get(id string) (*proto.User, error) {
 	return user, nil
 }
 
-func (repo *UserRepository) GetByEmailAndPassword(user *proto.User) (*proto.User, error) {
-	if err := repo.db.First(&user).Error; err != nil {
+func (repo *UserRepository) GetByEmail(email string) (*proto.User, error) {
+	user := &proto.User{}
+	if err := repo.db.Where("email = ?", email).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil
@@ -41,4 +46,5 @@ func (repo *UserRepository) Create(user *proto.User) error {
 	if err := repo.db.Create(user).Error; err != nil {
 		return err
 	}
+	return nil
 }

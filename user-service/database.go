@@ -9,8 +9,6 @@ import (
 )
 
 func CreateConnection() (*gorm.DB, error) {
-
-	// Get database details from environment variables
 	host := os.Getenv("DB_HOST")
 	user := os.Getenv("DB_USER")
 	DBName := os.Getenv("DB_NAME")

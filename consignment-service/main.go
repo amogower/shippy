@@ -1,13 +1,19 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"log"
 	"os"
 
 	proto "github.com/amogower/shippy/consignment-service/proto/consignment"
+	userService "github.com/amogower/shippy/user-service/proto/user"
 	vesselProto "github.com/amogower/shippy/vessel-service/proto/vessel"
 	"github.com/micro/go-micro"
+	"github.com/micro/go-micro/client"
+	"github.com/micro/go-micro/metadata"
+	"github.com/micro/go-micro/server"
 )
 
 const (
@@ -30,6 +36,7 @@ func main() {
 	srv := micro.NewService(
 		micro.Name("go.micro.srv.consignment"),
 		micro.Version("latest"),
+		micro.WrapHandler(AuthWrapper),
 	)
 
 	vesselClient := vesselProto.NewVesselServiceClient("go.micro.srv.vessel", srv.Client())
@@ -40,5 +47,32 @@ func main() {
 
 	if err := srv.Run(); err != nil {
 		fmt.Println(err)
+	}
+}
+
+func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
+	return func(ctx context.Context, req server.Request, resp interface{}) error {
+		if os.Getenv("DISABLE_AUTH") == "true" {
+			return fn(ctx, req, resp)
+		}
+
+		meta, ok := metadata.FromContext(ctx)
+		if !ok {
+			return errors.New("No auth metadata found in request")
+		}
+
+		token := meta["Token"]
+		log.Println("Authenticating with token: ", token)
+
+		authClient := userService.NewUserServiceClient("go.micro.srv.user", client.DefaultClient)
+		_, err := authClient.ValidateToken(context.Background(), &userService.Token{
+			Token: token,
+		})
+		if err != nil {
+			return err
+		}
+
+		err = fn(ctx, req, resp)
+		return err
 	}
 }
