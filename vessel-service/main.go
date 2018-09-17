@@ -42,7 +42,6 @@ func main() {
 		micro.Name("go.micro.srv.vessel"),
 		micro.Version("latest"),
 	)
-
 	srv.Init()
 
 	proto.RegisterVesselServiceHandler(srv.Server(), &service{session})
