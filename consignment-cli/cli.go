@@ -56,9 +56,8 @@ func main() {
 
 	r, err := client.CreateConsignment(ctx, consignment)
 	if err != nil {
-		log.Fatalf("Could not greet: %v", err)
+		log.Fatalf("Could not create consignment: %v", err)
 	}
-
 	log.Printf("Created: %t", r.Created)
 
 	getAll, err := client.GetConsignments(ctx, &proto.GetRequest{})

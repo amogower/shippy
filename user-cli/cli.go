@@ -20,9 +20,9 @@ func main() {
 
 	client := proto.NewUserServiceClient("go.micro.srv.user", microclient.DefaultClient)
 
-	name := "Andrew Gower"
-	email := "amogower@gmail.com"
-	password := "test123"
+	name := "Andy Gower"
+	email := "andygower@gmail.com"
+	password := "rtw987"
 	company := "Oddschecker"
 
 	r, err := client.Create(context.TODO(), &proto.User{

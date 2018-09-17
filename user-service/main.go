@@ -2,19 +2,25 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"time"
 
 	proto "github.com/amogower/shippy/user-service/proto/user"
+	"github.com/jinzhu/gorm"
 	"github.com/micro/go-micro"
 )
 
 func main() {
-	db, err := CreateConnection()
-	defer db.Close()
-
-	if err != nil {
-		log.Fatalf("Could not connect to DB: %v", err)
+	var db *gorm.DB
+	for attempts := 0; attempts < 10; attempts++ {
+		var err error
+		db, err = CreateConnection()
+		if err == nil {
+			break
+		}
+		time.Sleep(time.Second)
 	}
+
+	defer db.Close()
 
 	db.AutoMigrate(&proto.User{})
 

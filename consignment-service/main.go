@@ -62,6 +62,7 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 		}
 
 		token := meta["Token"]
+		log.Println("Working...")
 		log.Println("Authenticating with token: ", token)
 
 		authClient := userService.NewUserServiceClient("go.micro.srv.user", client.DefaultClient)
