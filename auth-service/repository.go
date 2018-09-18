@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/jinzhu/gorm"
 
-	proto "github.com/amogower/shippy/user-service/proto/user"
+	proto "github.com/amogower/shippy/auth-service/proto/auth"
 )
 
 type Repository interface {

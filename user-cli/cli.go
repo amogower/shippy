@@ -5,20 +5,20 @@ import (
 	"log"
 	"os"
 
-	proto "github.com/amogower/shippy/user-service/proto/user"
+	proto "github.com/amogower/shippy/auth-service/proto/auth"
 	"github.com/micro/go-micro"
 	microclient "github.com/micro/go-micro/client"
 )
 
 func main() {
 	srv := micro.NewService(
-		micro.Name("go.micro.srv.user-cli"),
+		micro.Name("auth-cli"),
 		micro.Version("latest"),
 	)
 
 	srv.Init()
 
-	client := proto.NewUserServiceClient("go.micro.srv.user", microclient.DefaultClient)
+	client := proto.NewAuthServiceClient("auth", microclient.DefaultClient)
 
 	name := "Andy Gower"
 	email := "andygower@gmail.com"

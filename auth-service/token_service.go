@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	proto "github.com/amogower/shippy/user-service/proto/user"
+	proto "github.com/amogower/shippy/auth-service/proto/auth"
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -47,7 +47,7 @@ func (srv *TokenService) Encode(user *proto.User) (string, error) {
 		user,
 		jwt.StandardClaims{
 			ExpiresAt: expireToken,
-			Issuer:    "go.micro.srv.user",
+			Issuer:    "auth",
 		},
 	}
 

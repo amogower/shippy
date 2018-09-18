@@ -60,8 +60,8 @@ services:
     environment:
       MICRO_ADDRESS: ":50051"
       MICRO_REGISTRY: "mdns"
-    depends_on:
-      - nats
+    # depends_on:
+    #   - nats
 
   datastore:
     image: mongo
@@ -73,7 +73,7 @@ services:
     ports:
       - 5432:5432
 
-  nats:
-    image: nats
-    ports:
-      - 4222:4222
+  # nats:
+  #   image: nats
+  #   ports:
+  #     - 4222:4222

@@ -7,8 +7,8 @@ import (
 	"log"
 	"os"
 
+	authService "github.com/amogower/shippy/auth-service/proto/auth"
 	proto "github.com/amogower/shippy/consignment-service/proto/consignment"
-	userService "github.com/amogower/shippy/user-service/proto/user"
 	vesselProto "github.com/amogower/shippy/vessel-service/proto/vessel"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/client"
@@ -65,8 +65,8 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 		log.Println("Working...")
 		log.Println("Authenticating with token: ", token)
 
-		authClient := userService.NewUserServiceClient("go.micro.srv.user", client.DefaultClient)
-		_, err := authClient.ValidateToken(context.Background(), &userService.Token{
+		authClient := authService.NewUserServiceClient("go.micro.srv.user", client.DefaultClient)
+		_, err := authClient.ValidateToken(context.Background(), &authService.Token{
 			Token: token,
 		})
 		if err != nil {

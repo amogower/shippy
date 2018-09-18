@@ -2,19 +2,19 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 
-	proto "github.com/amogower/shippy/user-service/proto/user"
-	"github.com/micro/go-micro/broker"
+	proto "github.com/amogower/shippy/auth-service/proto/auth"
+	"github.com/micro/go-micro"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type service struct {
 	repo         Repository
 	tokenService Authable
-	PubSub       broker.Broker
+	Publisher    micro.Publisher
 }
 
 func (srv *service) Get(ctx context.Context, req *proto.User, res *proto.Response) error {
@@ -60,20 +60,22 @@ func (srv *service) Auth(ctx context.Context, req *proto.User, res *proto.Token)
 }
 
 func (srv *service) Create(ctx context.Context, req *proto.User, res *proto.Response) error {
+	log.Println("Creating user: ", req)
+
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return errors.New(fmt.Sprintf("error hashing password: %v", err))
 	}
 
 	req.Password = string(hashedPass)
 	if err := srv.repo.Create(req); err != nil {
-		return err
+		return errors.New(fmt.Sprintf("error creating user: %v", err))
 	}
 
 	res.User = req
 
-	if err := srv.publishEvent("user.created", req); err != nil {
-		return err
+	if err := srv.Publisher.Publish(ctx, req); err != nil {
+		return errors.New(fmt.Sprintf("error publishing event: %v", err))
 	}
 
 	return nil
@@ -92,26 +94,6 @@ func (srv *service) ValidateToken(ctx context.Context, req *proto.Token, res *pr
 	}
 
 	res.Valid = true
-
-	return nil
-}
-
-func (srv *service) publishEvent(topic string, user *proto.User) error {
-	body, err := json.Marshal(user)
-	if err != nil {
-		return err
-	}
-
-	msg := &broker.Message{
-		Header: map[string]string{
-			"id": user.Id,
-		},
-		Body: body,
-	}
-
-	if err := srv.PubSub.Publish(topic, msg); err != nil {
-		log.Printf("[pub] failed: %v", err)
-	}
 
 	return nil
 }

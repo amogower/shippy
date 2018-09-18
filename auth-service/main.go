@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	proto "github.com/amogower/shippy/user-service/proto/user"
+	proto "github.com/amogower/shippy/auth-service/proto/auth"
 	"github.com/jinzhu/gorm"
 	"github.com/micro/go-micro"
 )
@@ -29,15 +29,15 @@ func main() {
 	tokenService := &TokenService{repo}
 
 	srv := micro.NewService(
-		micro.Name("go.micro.srv.user"),
+		micro.Name("auth"),
 		micro.Version("latest"),
 	)
 
 	srv.Init()
 
-	pubsub := srv.Server().Options().Broker
+	publisher := micro.NewPublisher("user.created", srv.Client())
 
-	proto.RegisterUserServiceHandler(srv.Server(), &service{repo, tokenService, pubsub})
+	proto.RegisterAuthServiceHandler(srv.Server(), &service{repo, tokenService, publisher})
 
 	if err := srv.Run(); err != nil {
 		fmt.Println(err)
