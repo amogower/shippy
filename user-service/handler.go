@@ -2,16 +2,19 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"log"
 
 	proto "github.com/amogower/shippy/user-service/proto/user"
+	"github.com/micro/go-micro/broker"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type service struct {
 	repo         Repository
 	tokenService Authable
+	PubSub       broker.Broker
 }
 
 func (srv *service) Get(ctx context.Context, req *proto.User, res *proto.Response) error {
@@ -68,6 +71,11 @@ func (srv *service) Create(ctx context.Context, req *proto.User, res *proto.Resp
 	}
 
 	res.User = req
+
+	if err := srv.publishEvent("user.created", req); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -84,6 +92,26 @@ func (srv *service) ValidateToken(ctx context.Context, req *proto.Token, res *pr
 	}
 
 	res.Valid = true
+
+	return nil
+}
+
+func (srv *service) publishEvent(topic string, user *proto.User) error {
+	body, err := json.Marshal(user)
+	if err != nil {
+		return err
+	}
+
+	msg := &broker.Message{
+		Header: map[string]string{
+			"id": user.Id,
+		},
+		Body: body,
+	}
+
+	if err := srv.PubSub.Publish(topic, msg); err != nil {
+		log.Printf("[pub] failed: %v", err)
+	}
 
 	return nil
 }
