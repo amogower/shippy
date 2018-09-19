@@ -1,5 +1,5 @@
 FROM golang:1.9.0 as builder
-WORKDIR /go/src/github.com/amogower/shippy/user-cli
+WORKDIR /go/src/github.com/amogower/shippy/auth-cli
 COPY . .
 RUN go get -u github.com/golang/dep/cmd/dep
 RUN dep init && dep ensure
@@ -9,6 +9,6 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 RUN mkdir /app
 WORKDIR /app
-COPY --from=builder /go/src/github.com/amogower/shippy/user-cli/user-cli .
-ENTRYPOINT ["./user-cli"]
-CMD ["./user-cli"]
+COPY --from=builder /go/src/github.com/amogower/shippy/auth-cli/auth-cli .
+ENTRYPOINT ["./auth-cli"]
+CMD ["./auth-cli"]

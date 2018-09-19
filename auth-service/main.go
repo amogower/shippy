@@ -29,7 +29,7 @@ func main() {
 	tokenService := &TokenService{repo}
 
 	srv := micro.NewService(
-		micro.Name("auth"),
+		micro.Name("shippy.auth"),
 		micro.Version("latest"),
 	)
 
@@ -37,7 +37,7 @@ func main() {
 
 	publisher := micro.NewPublisher("user.created", srv.Client())
 
-	proto.RegisterAuthServiceHandler(srv.Server(), &service{repo, tokenService, publisher})
+	proto.RegisterAuthHandler(srv.Server(), &service{repo, tokenService, publisher})
 
 	if err := srv.Run(); err != nil {
 		fmt.Println(err)

@@ -87,8 +87,6 @@ func (srv *service) ValidateToken(ctx context.Context, req *proto.Token, res *pr
 		return err
 	}
 
-	log.Println(claims)
-
 	if claims.User.Id == "" {
 		return errors.New("invalid user")
 	}

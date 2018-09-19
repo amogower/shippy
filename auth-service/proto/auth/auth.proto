@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package auth;
+package shippy.auth;
 
-service AuthService {
+service Auth {
   rpc Create(User) returns (Response) {}
   rpc Get(User) returns (Response) {}
   rpc GetAll(Request) returns (Response) {}

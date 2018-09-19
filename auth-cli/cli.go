@@ -12,18 +12,18 @@ import (
 
 func main() {
 	srv := micro.NewService(
-		micro.Name("auth-cli"),
+		micro.Name("shippy.auth-cli"),
 		micro.Version("latest"),
 	)
 
 	srv.Init()
 
-	client := proto.NewAuthServiceClient("auth", microclient.DefaultClient)
+	client := proto.NewAuthClient("shippy.auth", microclient.DefaultClient)
 
-	name := "Andy Gower"
-	email := "andygower@gmail.com"
+	name := "Andrew Gower"
+	email := "amogower@gmail.com"
 	password := "rtw987"
-	company := "Oddschecker"
+	company := "Capability"
 
 	r, err := client.Create(context.TODO(), &proto.User{
 		Name:     name,

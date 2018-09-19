@@ -1,7 +1,6 @@
 version: '3.1'
 
 services:
-
   consignment-cli:
     build: ./consignment-cli
     environment:
@@ -31,15 +30,15 @@ services:
     depends_on:
       - datastore
 
-  user-cli:
-    build: ./user-cli
+  auth-cli:
+    build: ./auth-cli
     environment:
       MICRO_REGISTRY: "mdns"
     depends_on:
-      - user-service
+      - auth-service
 
-  user-service:
-    build: ./user-service
+  auth-service:
+    build: ./auth-service
     ports:
       - 50053:50051
     environment:
@@ -60,8 +59,14 @@ services:
     environment:
       MICRO_ADDRESS: ":50051"
       MICRO_REGISTRY: "mdns"
-    # depends_on:
-    #   - nats
+
+  api:
+    image: microhq/micro:latest
+    command: --registry_address=consul:8500 api --handler=rpc --address=:8080 --namespace=shippy
+    ports:
+      - 8080:8080
+    environment:
+      MICRO_REGISTRY: "mdns"
 
   datastore:
     image: mongo
@@ -72,8 +77,3 @@ services:
     image: postgres
     ports:
       - 5432:5432
-
-  # nats:
-  #   image: nats
-  #   ports:
-  #     - 4222:4222
