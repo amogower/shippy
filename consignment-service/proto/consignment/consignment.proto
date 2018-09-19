@@ -3,8 +3,8 @@ syntax = "proto3";
 package consignment;
 
 service ConsignmentService {
-  rpc CreateConsignment(Consignment) returns (Response) {}
-  rpc GetConsignments(GetRequest) returns (Response) {}
+  rpc Create(Consignment) returns (Response) {}
+  rpc Get(GetRequest) returns (Response) {}
 }
 
 message Consignment {
