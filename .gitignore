@@ -1,1 +1,7 @@
 .idea
+infrastructure
+variables.tf
+terraform.tfstate
+providers.tf
+google-cred.json
+global.tf

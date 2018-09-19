@@ -1,12 +1,12 @@
 version: '3.1'
 
 services:
-  consignment-cli:
-    build: ./consignment-cli
-    environment:
-      MICRO_REGISTRY: "mdns"
-    depends_on:
-      - consignment-service
+  # consignment-cli:
+  #   build: ./consignment-cli
+  #   environment:
+  #     MICRO_REGISTRY: "mdns"
+  #   depends_on:
+  #     - consignment-service
 
   consignment-service:
     build: ./consignment-service
@@ -30,12 +30,12 @@ services:
     depends_on:
       - datastore
 
-  auth-cli:
-    build: ./auth-cli
-    environment:
-      MICRO_REGISTRY: "mdns"
-    depends_on:
-      - auth-service
+  # auth-cli:
+  #   build: ./auth-cli
+  #   environment:
+  #     MICRO_REGISTRY: "mdns"
+  #   depends_on:
+  #     - auth-service
 
   auth-service:
     build: ./auth-service

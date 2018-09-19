@@ -20,7 +20,7 @@ type service struct {
 func (srv *service) Get(ctx context.Context, req *proto.User, res *proto.Response) error {
 	user, err := srv.repo.Get(req.Id)
 	if err != nil {
-		return err
+		return fmt.Errorf("error getting user: %v", err)
 	}
 
 	res.User = user
@@ -30,7 +30,7 @@ func (srv *service) Get(ctx context.Context, req *proto.User, res *proto.Respons
 func (srv *service) GetAll(ctx context.Context, req *proto.Request, res *proto.Response) error {
 	users, err := srv.repo.GetAll()
 	if err != nil {
-		return err
+		return fmt.Errorf("error getting all users: %v", err)
 	}
 
 	res.Users = users
@@ -42,17 +42,17 @@ func (srv *service) Auth(ctx context.Context, req *proto.User, res *proto.Token)
 
 	user, err := srv.repo.GetByEmail(req.Email)
 	if err != nil {
-		return err
+		return fmt.Errorf("error getting user by email: %v", err)
 	}
 	log.Println(user)
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		return err
+		return fmt.Errorf("error comparing hash and password: %v", err)
 	}
 
 	token, err := srv.tokenService.Encode(user)
 	if err != nil {
-		return err
+		return fmt.Errorf("error encoding token: %v", err)
 	}
 
 	res.Token = token
@@ -64,18 +64,18 @@ func (srv *service) Create(ctx context.Context, req *proto.User, res *proto.Resp
 
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return errors.New(fmt.Sprintf("error hashing password: %v", err))
+		return fmt.Errorf("error hashing password: %v", err)
 	}
 
 	req.Password = string(hashedPass)
 	if err := srv.repo.Create(req); err != nil {
-		return errors.New(fmt.Sprintf("error creating user: %v", err))
+		return fmt.Errorf("error creating user: %v", err)
 	}
 
 	res.User = req
 
 	if err := srv.Publisher.Publish(ctx, req); err != nil {
-		return errors.New(fmt.Sprintf("error publishing event: %v", err))
+		return fmt.Errorf("error publishing event: %v", err)
 	}
 
 	return nil
@@ -84,7 +84,7 @@ func (srv *service) Create(ctx context.Context, req *proto.User, res *proto.Resp
 func (srv *service) ValidateToken(ctx context.Context, req *proto.Token, res *proto.Token) error {
 	claims, err := srv.tokenService.Decode(req.Token)
 	if err != nil {
-		return err
+		return fmt.Errorf("error decoding token: %v", err)
 	}
 
 	if claims.User.Id == "" {

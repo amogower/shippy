@@ -4,7 +4,7 @@ package consignment;
 
 service ConsignmentService {
   rpc Create(Consignment) returns (Response) {}
-  rpc Get(GetRequest) returns (Response) {}
+  rpc Get(Request) returns (Response) {}
 }
 
 message Consignment {
@@ -22,7 +22,7 @@ message Container {
   string user_id = 4;
 }
 
-message GetRequest {}
+message Request {}
 
 message Response {
   bool created = 1;

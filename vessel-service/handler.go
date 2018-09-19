@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	proto "github.com/amogower/shippy/vessel-service/proto/vessel"
 	"gopkg.in/mgo.v2"
@@ -21,7 +22,7 @@ func (s *service) FindAvailable(ctx context.Context, req *proto.Specification, r
 
 	vessel, err := repo.FindAvailable(req)
 	if err != nil {
-		return err
+		return fmt.Errorf("error finding available vessel: %v", err)
 	}
 
 	res.Vessel = vessel
@@ -33,7 +34,7 @@ func (s *service) Create(ctx context.Context, req *proto.Vessel, res *proto.Resp
 	defer repo.Close()
 
 	if err := repo.Create(req); err != nil {
-		return err
+		return fmt.Errorf("error creating vessel: %v", err)
 	}
 
 	res.Vessel = req
