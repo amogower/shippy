@@ -11,10 +11,7 @@ import (
 )
 
 func main() {
-	srv := micro.NewService(
-		micro.Name("shippy.auth-cli"),
-		micro.Version("latest"),
-	)
+	srv := micro.NewService(micro.Name("shippy.auth-cli"))
 
 	srv.Init()
 

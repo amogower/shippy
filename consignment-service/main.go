@@ -7,9 +7,9 @@ import (
 	"log"
 	"os"
 
-	auth "github.com/amogower/shippy/auth-service/proto/auth"
+	authService "github.com/amogower/shippy/auth-service/proto/auth"
 	proto "github.com/amogower/shippy/consignment-service/proto/consignment"
-	vessel "github.com/amogower/shippy/vessel-service/proto/vessel"
+	vesselService "github.com/amogower/shippy/vessel-service/proto/vessel"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/metadata"
@@ -35,15 +35,14 @@ func main() {
 
 	srv := micro.NewService(
 		micro.Name("shippy.consignment"),
-		micro.Version("latest"),
 		micro.WrapHandler(AuthWrapper),
 	)
 
-	vesselClient := vessel.NewVesselServiceClient("shippy.vessel", srv.Client())
+	vesselClient := vesselService.NewVesselServiceClient("shippy.vessel", srv.Client())
 
 	srv.Init()
 
-	proto.RegisterShippingServiceHandler(srv.Server(), &service{session, vesselClient})
+	proto.RegisterConsignmentServiceHandler(srv.Server(), &service{session, vesselClient})
 
 	if err := srv.Run(); err != nil {
 		fmt.Println(err)
@@ -65,8 +64,8 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 		log.Println("Working...")
 		log.Println("Authenticating with token: ", token)
 
-		authClient := auth.NewAuthServiceClient("shippy.auth", client.DefaultClient)
-		_, err := authClient.ValidateToken(context.Background(), &auth.Token{
+		authClient := authService.NewAuthServiceClient("shippy.auth", client.DefaultClient)
+		_, err := authClient.ValidateToken(context.Background(), &authService.Token{
 			Token: token,
 		})
 		if err != nil {
