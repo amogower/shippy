@@ -18,7 +18,7 @@ func main() {
 
 	srv.Init()
 
-	client := proto.NewAuthClient("shippy.auth", microclient.DefaultClient)
+	client := proto.NewAuthServiceClient("shippy.auth", microclient.DefaultClient)
 
 	name := "Andrew Gower"
 	email := "amogower@gmail.com"

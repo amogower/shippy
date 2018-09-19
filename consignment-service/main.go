@@ -34,12 +34,12 @@ func main() {
 	defer session.Close()
 
 	srv := micro.NewService(
-		micro.Name("go.micro.srv.consignment"),
+		micro.Name("shippy.consignment"),
 		micro.Version("latest"),
 		micro.WrapHandler(AuthWrapper),
 	)
 
-	vesselClient := vessel.NewVesselServiceClient("go.micro.srv.vessel", srv.Client())
+	vesselClient := vessel.NewVesselServiceClient("shippy.vessel", srv.Client())
 
 	srv.Init()
 
@@ -65,7 +65,7 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 		log.Println("Working...")
 		log.Println("Authenticating with token: ", token)
 
-		authClient := auth.NewAuthClient("go.micro.srv.user", client.DefaultClient)
+		authClient := auth.NewAuthServiceClient("shippy.auth", client.DefaultClient)
 		_, err := authClient.ValidateToken(context.Background(), &auth.Token{
 			Token: token,
 		})

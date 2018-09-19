@@ -38,10 +38,7 @@ func main() {
 
 	createDummyData(repo)
 
-	srv := micro.NewService(
-		micro.Name("go.micro.srv.vessel"),
-		micro.Version("latest"),
-	)
+	srv := micro.NewService(micro.Name("shippy.vessel"))
 	srv.Init()
 
 	proto.RegisterVesselServiceHandler(srv.Server(), &service{session})

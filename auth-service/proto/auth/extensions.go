@@ -1,4 +1,4 @@
-package shippy_auth
+package auth
 
 import (
 	"github.com/gofrs/uuid"
